@@ -2,10 +2,12 @@
   "name": "Отчет Экспедитора",
   "short_name": "Отчет",
   "id": "./",
-  "start_url": "./index.html",
   "scope": "./",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
+  "lang": "ru",
+  "description": "Офлайн-отчеты экспедиторов с автосинхронизацией в Google Таблицу",
   "background_color": "#f1f3f5",
   "theme_color": "#1971c2",
   "icons": [
@@ -20,6 +22,18 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

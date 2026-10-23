@@ -4,69 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Отчет Водителя</title>
-    
-    <!-- PWA и мета-теги для мобильных устройств -->
+
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#1971c2">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Отчет">
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 
     <style>
-        * { 
-            box-sizing: border-box; 
+        * {
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: 12px; 
-            max-width: 500px; 
-            margin: auto; 
-            background: #f1f3f5; 
-            color: #212529; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 12px;
+            max-width: 500px;
+            margin: auto;
+            background: #f1f3f5;
+            color: #212529;
             -webkit-user-select: none;
             user-select: none;
         }
-        .card { 
-            background: #ffffff; 
-            padding: 18px; 
-            border-radius: 12px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+        .card {
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        h2 { 
-            margin: 0 0 12px 0; 
-            font-size: 19px; 
-            text-align: center; 
+        h2 {
+            margin: 0 0 12px 0;
+            font-size: 19px;
+            text-align: center;
         }
-        .badge { 
-            display: block; 
-            text-align: center; 
-            padding: 6px; 
-            border-radius: 6px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            margin-bottom: 14px; 
+        /* Плашка статуса сети: зеленая = онлайн, красная = офлайн */
+        .badge {
+            display: block;
+            text-align: center;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 14px;
         }
         .badge.online { background: #d3f9d8; color: #2b8a3e; }
         .badge.offline { background: #ffe3e3; color: #c92a2a; }
-        
+
         .field { margin-bottom: 12px; }
-        label { 
-            display: block; 
-            margin-bottom: 4px; 
-            font-weight: 600; 
-            font-size: 13px; 
-            color: #495057; 
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #495057;
         }
-        input, textarea { 
-            width: 100%; 
-            padding: 11px; 
-            font-size: 16px; /* 16px предотвращает автозум в iOS Safari */
-            border: 1px solid #ced4da; 
-            border-radius: 8px; 
-            outline: none; 
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            outline: none;
             background: #fff;
             -webkit-user-select: auto;
             user-select: auto;
@@ -81,38 +82,124 @@
             font-size: 14px;
         }
 
-        button { 
-            width: 100%; 
-            background: #1971c2; 
-            color: #ffffff; 
-            border: none; 
-            padding: 15px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin-top: 6px; 
+        /* СПИСОК ВЫБРАННЫХ ФОТО */
+        /* Превью-строки под полем выбора: имя файла + кнопка удаления */
+        .photo-list { margin-top: 8px; }
+        .photo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #e7f1ff;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1864ab;
+        }
+        .photo-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+        .photo-remove {
+            width: 28px;
+            height: 28px;
+            flex: 0 0 auto;
+            margin: 0;
+            padding: 0;
+            background: #d0ebff;
+            color: #1864ab;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .photo-remove:active { background: #a5d8ff; }
+        /* ====================================================================== */
+
+        button {
+            width: 100%;
+            background: #1971c2;
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 6px;
             touch-action: manipulation;
         }
         button:active { background: #1864ab; }
-        button:disabled { 
-            background: #adb5bd; 
-            cursor: not-allowed; 
+        /* Серый вид заблокированной кнопки на время обработки */
+        button:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
             opacity: 0.8;
         }
 
-        #status { 
-            margin-top: 12px; 
-            padding: 10px; 
-            border-radius: 6px; 
-            background: #e9ecef; 
-            text-align: center; 
-            font-size: 12px; 
-            font-weight: 600; 
+        /* Статусная строка: прогресс и понятные ошибки */
+        #status {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            background: #e9ecef;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
             line-height: 1.4;
             color: #495057;
             word-break: break-word;
         }
+
+        /* ОКНО ПОДТВЕРЖДЕНИЯ ОТПРАВКИ */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+        .confirm-overlay.hidden { display: none; }        
+        .confirm-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+        }
+        .confirm-title {
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        /* Краткая сводка отчета; pre-line — перенос строк из \n в textContent */
+        .confirm-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #495057;
+            white-space: pre-line;
+            word-break: break-word;
+            margin-bottom: 14px;
+        }
+        .confirm-buttons { display: flex; gap: 10px; }
+        .confirm-buttons button { width: auto; flex: 1; margin-top: 0; }
+        .confirm-yes { background: #2b8a3e; }
+        .confirm-yes:active { background: #237032; }
+        .confirm-no { background: #868e96; }
+        .confirm-no:active { background: #6c757d; }
     </style>
 </head>
 <body>
@@ -120,6 +207,7 @@
         <div id="netStatus" class="badge online">● Подключение: Онлайн</div>
         <h2>Отчет экспедитора</h2>
 
+        <!-- ФИО: сохраняется в localStorage -->
         <div class="field">
             <label>ФИО Водителя (сохраняется в памяти):</label>
             <input type="text" id="username" placeholder="Иванов Иван" autocomplete="name">
@@ -132,7 +220,6 @@
 
         <div class="field">
             <label>2. Показания счетчика</label>
-            <!-- inputmode="numeric" дает цифровую клавиатуру, сохраняя ведущие нули -->
             <input type="text" id="meter" inputmode="numeric" pattern="[0-9]*" placeholder="Значение счетчика">
         </div>
 
@@ -158,12 +245,33 @@
         </div>
 
         <div class="field">
-            <label>7. Фотография (счетчик / витрина)</label>
-            <input type="file" id="photo" accept="image/*">
+            <!-- НОВОЕ (v3.2): несколько фото. Лимит задается константой
+                 MAX_PHOTOS в app.js; число в подписи обновится само из JS.
+                 multiple = можно выбрать сразу несколько файлов галереи -->
+            <label>7. Фотографии — счетчик / витрина (до <span id="photoLimit">3</span> шт.)</label>
+            <input type="file" id="photo" accept="image/*" multiple>
+            <!-- превью выбранных фото с кнопками удаления (заполняется из app.js) -->
+            <div id="photoList" class="photo-list"></div>
         </div>
 
-        <button type="button" id="submitBtn" onclick="handleFormSubmit()">ОТПРАВИТЬ ДАННЫЕ</button>
+        <!-- Клик обрабатывается через addEventListener в app.js -->
+        <button type="button" id="submitBtn">ОТПРАВИТЬ ДАННЫЕ</button>
         <div id="status">Готово к заполнению</div>
+    </div>
+
+    <!-- ПОДТВЕРЖДЕНИЕ ОТПРАВКИ
+         Показывается из app.js перед сохранением отчета. Кнопка «ДА» —
+         отправить; «НЕТ», Esc или тап по темному фону — закрыть без отправки.
+         Сводка отчета (#confirmSummary) заполняется из app.js как текст. -->
+    <div id="confirmOverlay" class="confirm-overlay hidden">
+        <div class="confirm-box">
+            <div class="confirm-title">Вы хотите отправить данный отчёт?</div>
+            <div id="confirmSummary" class="confirm-summary"></div>
+            <div class="confirm-buttons">
+                <button type="button" id="confirmNo" class="confirm-no">НЕТ</button>
+                <button type="button" id="confirmYes" class="confirm-yes">ДА</button>
+            </div>
+        </div>
     </div>
 
     <script src="./app.js"></script>
